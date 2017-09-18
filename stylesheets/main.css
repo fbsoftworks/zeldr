@@ -1,0 +1,74 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.viewport {
+  position: relative;
+  border: 1px solid red;
+  height: 100%;
+  width: 100%;
+}
+
+.viewport .world  {
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  border: 30px solid red;
+}
+
+.world .block {
+  position: relative;
+  display: block;
+  float: left;
+  width: 89px;
+  height: 89px;
+  background: #ccc;
+}
+
+.world .block .terrain,
+.world .block .object,
+.world .block .sprite {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 89px;
+  height: 89px;
+}
+
+.world .block .terrain {
+  z-index: 100;
+}
+
+.world .block .object {
+  z-index: 100;
+}
+
+.world .block .terrain img,
+.world .block .object img,
+.world .block .sprite img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/*
+.world .sprite {
+  display: block;
+  position: absolute;
+  z-index: 200;
+  left: 50%;
+  top: 50%;
+  width: 89px;
+  height: 89px;
+  background: #000;
+}
+*/
+
+.defloat {
+  float: none;
+  clear: both;
+}

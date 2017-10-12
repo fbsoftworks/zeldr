@@ -1,108 +1,83 @@
-$(function() {
+Game = {
+  player: null,
+  level_name: '0000',
+  keys: $.extend(KEYS, { pressed: [] }),
 
+  $elem: null,
+  $world: null,
 
-  BLOCK_DIMENSIONS = {
-    x: 89,
-    y: 89
-  }
-
-  Game = {
-    $elem: null,
-    $world: null,
-    keys: {
-      '38':        {   action: 'move', params: { direction: 'n'  }  },
-      '39':        {   action: 'move', params: { direction: 'e'  }  },
-      '40':        {   action: 'move', params: { direction: 's'  }  },
-      '37':        {   action: 'move', params: { direction: 'w'  }  },
-      '38_39':     {   action: 'move', params: { direction: 'ne' }  },
-      '39_40':     {   action: 'move', params: { direction: 'se' }  },
-      '37_40':     {   action: 'move', params: { direction: 'sw' }  },
-      '37_38':     {   action: 'move', params: { direction: 'nw' }  },
-      '32_38':     {   action: 'move_atk', params: { direction: 'n' } },
-      '32_39':     {   action: 'move_atk', params: { direction: 'e' } },
-      '32_40':     {   action: 'move_atk', params: { direction: 's' } },
-      '32_37':     {   action: 'move_atk', params: { direction: 'w' } },
-      '32_38_39':  {   action: 'move_atk', params: { direction: 'ne' }  },
-      '32_39_40':  {   action: 'move_atk', params: { direction: 'se' }  },
-      '32_37_40':  {   action: 'move_atk', params: { direction: 'sw' }  },
-      '32_37_38':  {   action: 'move_atk', params: { direction: 'nw' }  },
-      '38_69':     {   action: 'move_use', params: { direction: 'n'  }  },
-      '39_69':     {   action: 'move_use', params: { direction: 'e'  }  },
-      '40_69':     {   action: 'move_use', params: { direction: 's'  }  },
-      '37_69':     {   action: 'move_use', params: { direction: 'w'  }  },
-      '38_39_69':  {   action: 'move_use', params: { direction: 'ne' }  },
-      '39_40_69':  {   action: 'move_use', params: { direction: 'se' }  },
-      '37_40_69':  {   action: 'move_use', params: { direction: 'sw' }  },
-      '37_38_69':  {   action: 'move_use', params: { direction: 'nw' }  },
-
-      pressed: [],
-    },
-
-    player: null,
-
-    register_keypress: function(key_code, status) {
-      if (status) {
-        if ($.inArray(key_code, this.keys.pressed) < 0) {
-          this.keys.pressed.push(key_code);
-        } else { return false; }
-      } else {
-        while (this.keys.pressed.indexOf(key_code) >= 0) {
-          this.keys.pressed.splice(this.keys.pressed.indexOf(key_code), 1);
-        }
+  register_keypress: function(key_code, status) {
+    if (status) {
+      if ($.inArray(key_code, this.keys.pressed) < 0) {
+        this.keys.pressed.push(key_code);
+      } else { return false; }
+    } else {
+      while (this.keys.pressed.indexOf(key_code) >= 0) {
+        this.keys.pressed.splice(this.keys.pressed.indexOf(key_code), 1);
       }
+    }
+    return true;
+  },
+
+  init: function(level_name) {
+    var self = this;
+    self.$elem = $('app');
+
+    // set viewport dimensions
+    self.$elem.width($(window).innerWidth());
+    self.$elem.height($(window).innerHeight());
+
+    // init world
+    self.world  = new World({
+      level_name: self.level_name,
+      $container: self.$elem
+    }).init().draw();
+
+    // init player
+    self.player = new Sprite({
+      is_player: true,
+      name: PLAYER_SPRITE_SHEET_NAME
+    }).init();
+
+    $(document).on('keydown', function(e) {
+      e.preventDefault();
+      self.register_keypress(e.keyCode, true);
       return true;
-    },
+    });
 
-    init: function() {
-      var self = this;
-      self.keys = this.keys;
+    $(document).on('keyup', function(e) {
+      e.preventDefault();
+      self.register_keypress(e.keyCode, false);
+      return true;
+    });
 
-      this.$elem = $('app');
-
-      this.$world = $('<div class="world"></div>').appendTo(this.$elem);
-
-      self.player = new Sprite({
-        $world: this.$world,
-        name: 'test_pattern'
-      });
-      self.player.init();
-
-      $(document).on('keydown', function(e) {
-        e.preventDefault();
-        self.register_keypress(e.keyCode, true);
-        return true;
-      });
-
-      $(document).on('keyup', function(e) {
-        e.preventDefault();
-        self.register_keypress(e.keyCode, false);
-        return true;
-      });
-
-      // game loop
-      setInterval(function() {
-        if (self.keys.pressed.length > 0) {
-          combined_key = self.keys.pressed.sort().join('_');
-          console.log(combined_key);
-          if (self.keys[combined_key]) {
-            if (self.keys[combined_key].action == 'move') {
-              self.player.move(self.keys[combined_key].params);
-            } else if (self.keys[combined_key].action == 'move_atk') {
-              self.player.move(self.keys[combined_key].params);
-              self.player.attack(self.keys[combined_key].params);
-            } else if (self.keys[combined_key].action == 'move_use') {
-              self.player.move(self.keys[combined_key].params);
-              self.player.use(self.keys[combined_key].params);
-            }
+    // game loop
+    setInterval(function() {
+      if (self.keys.pressed.length > 0) {
+        combined_key = self.keys.pressed.sort().join('_');
+        console.log(combined_key);
+        if (self.keys[combined_key]) {
+          if (self.keys[combined_key].action == 'move') {
+            self.player.move(self.keys[combined_key].params);
+          } else if (self.keys[combined_key].action == 'move_atk') {
+            self.player.move(self.keys[combined_key].params);
+            self.player.attack(self.keys[combined_key].params);
+          } else if (self.keys[combined_key].action == 'move_use') {
+            self.player.move(self.keys[combined_key].params);
+            self.player.use(self.keys[combined_key].params);
+          } else if (self.keys[combined_key].action == 'move_use') {
+            self.player.use(self.keys[combined_key].params);
           }
         }
-      }, self.player.move_delay);
+      }
+    }, self.PLAYER_MOVE_DELAY);
 
-    },
+  },
+};
 
-  }
+$(function() {
   Game.init();
-
+});
 
 
 
@@ -168,7 +143,7 @@ $(function() {
 //  App = {
 //    $app: $('app'),
 //    $viewport: null,
-//    $world: null,
+//    $level: null,
 //    $player: null,
 //
 //    current_world: null,
@@ -269,10 +244,10 @@ $(function() {
 //      self = this;
 //
 //      self.$viewport = $('<div class="viewport"></div>').appendTo(self.$app);
-//      self.$world = $('<div class="world"></div>').appendTo(self.$viewport);
-//      self.$player = $('<div class="player"></div>').appendTo(self.$world);
+//      self.$level = $('<div class="world"></div>').appendTo(self.$viewport);
+//      self.$player = $('<div class="player"></div>').appendTo(self.$level);
 //
-//      self.current_world = self.draw_world(self.$world, world_num);
+//      self.current_world = self.draw_world(self.$level, world_num);
 //
 //      self.player.width = self.$player.width();
 //      self.player.height = self.$player.height();
@@ -301,5 +276,3 @@ $(function() {
 //
 //  }
 //  App.init({ world_num: 0 });
-
-})

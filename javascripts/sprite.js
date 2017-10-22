@@ -12,6 +12,7 @@ Sprite = function(opts) {
   };
   this.current_direction = 's';
   this.current_frame = 1;
+  this.current_image_path = null;
   this.swap_timer = 0;
   this.directions = DIRECTIONS;
 
@@ -19,15 +20,16 @@ Sprite = function(opts) {
   this.$elem = null;
 
   this.init = function() {
-    var self = this;
-    self.$elem = $('<div class="sprite _' + self.name + '"></div>').appendTo(self.$container);
-    $('<img src="' + Helpers.get_image_path(self.name, self.current_direction, self.current_frame) + '" />').appendTo(self.$elem);
+    this.set_direction(this.current_direction);
+
+    this.$elem = $('<div class="sprite _' + this.name + '"></div>').appendTo(this.$container);
+    $('<img src="' + this.current_image_path + '" />').appendTo(this.$elem);
 
     // set sprite dimensions
-    self.$elem.width(this.dimensions.in_pixels.x);
-    self.$elem.height(this.dimensions.in_pixels.y);
+    this.$elem.width(this.dimensions.in_pixels.x);
+    this.$elem.height(this.dimensions.in_pixels.y);
 
-    return self;
+    return this;
   };
 
   this.set_position = function(x, y, $context) {
@@ -36,6 +38,11 @@ Sprite = function(opts) {
     this.position.in_pixels.y = y;
     $context.css('left', x);
     $context.css('top', y);
+  };
+
+  this.set_direction = function(direction) {
+    this.current_direction = direction;
+    this.current_image_path = Helpers.get_image_path(this.name, this.current_direction, this.current_frame);
   };
 
   this.swap_image = function() {

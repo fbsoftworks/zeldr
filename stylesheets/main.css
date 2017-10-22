@@ -5,24 +5,23 @@
 
 app {
   position: absolute;
-  border: 3px solid blue;
   overflow: hidden;
 }
 
 app .world  {
-  border: 1px solid red;
   position: absolute;
   top: 0;
   left: 0;
 }
 
 .world .block {
-  position: relative;
+  position: absolute;
   display: block;
-  float: left;
+  top: 0;
+  left: 0;
   width: 89px;
   height: 89px;
-  background: transparent;
+  background: #000;
   z-index: 0;
 }
 

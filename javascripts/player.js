@@ -5,62 +5,44 @@ Player = function(opts) {
   this.sprite = null;
 
   this.init = function() {
-    self = this;
-    self.sprite = new Sprite({
-      name: self.sprite_image_set,
-      $container: self.$container
+    this.sprite = new Sprite({
+      name: this.sprite_image_set,
+      $container: this.$container
     });
-    self.sprite.init();
-    self.centerize();
+    this.sprite.init();
+    this.centerize();
   };
 
   this.centerize = function() {
-    self.sprite.$elem.css({
-      left: (self.$container.width() / 2) - (this.sprite.$elem.width() / 2) + 'px'
+    this.sprite.$elem.css({
+      left: (this.$container.width() / 2) - (this.sprite.$elem.width() / 2) + 'px'
     });
-    self.sprite.$elem.css({
-      top: (self.$container.height() / 2) - (this.sprite.$elem.height() / 2) + 'px'
+    this.sprite.$elem.css({
+      top: (this.$container.height() / 2) - (this.sprite.$elem.height() / 2) + 'px'
     });
   };
 
   this.move = function(opts) {
-    var self = this;
-    self.current_direction = opts.direction;
-    var dir = DIRECTIONS[self.current_direction];
-    var new_pos = {
-      x: self.world.position.in_pixels.x,
-      y: self.world.position.in_pixels.y
-    };
+    if (this.current_direction != opts.direction) {
+      this.current_direction = opts.direction;
+      this.sprite.set_direction(this.current_direction);
+    }
+    var new_pos = DIRECTIONS[this.current_direction].advance(this.world.position.in_pixels);
 
-    if (self.sprite.swap_timer >= PLAYER_SWAP_TIMER_MAX) {
-      self.sprite.swap_image(); self.sprite.swap_timer = 0;
+    if (this.sprite.swap_timer >= PLAYER_SWAP_TIMER_MAX) {
+      this.sprite.swap_image(); this.sprite.swap_timer = 0;
     } else {
-      self.sprite.swap_timer++;
+      this.sprite.swap_timer++;
     }
 
-    if (dir.axes.x.operator) {
-      inverse_operator = Helpers.get_inverse_operator(dir.axes.x.operator);
-      new_pos.x = parseInt(eval(
-        new_pos.x + inverse_operator + (
-          (PLAYER_MOVE_AMOUNT) + '/' + String(dir.axes.x.divisor)
-        )
-      ));
-    }
-    if (dir.axes.y.operator) {
-      inverse_operator = Helpers.get_inverse_operator(dir.axes.y.operator);
-      new_pos.y = parseInt(eval(
-        new_pos.y + inverse_operator + (
-          (PLAYER_MOVE_AMOUNT) + '/' + String(dir.axes.y.divisor)
-        )
-      ));
-    }
+    // TODO: check for collisions and such before updating real position
 
-    self.world.position.in_pixels.x = new_pos.x;
-    self.world.position.in_pixels.y = new_pos.y;
+    this.world.position.in_pixels = new_pos;
 
-    self.world.$elem.css({ left: new_pos.x + 'px' });
-    self.world.$elem.css({ top: new_pos.y + 'px' });
-
+    this.world.$elem.css({
+      left: new_pos.x + 'px',
+      top: new_pos.y + 'px'
+    });
   };
 
   this.attack = function(opts) {

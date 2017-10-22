@@ -1,52 +1,56 @@
 /*jshint esversion: 6 */
-const DIAG_ADJ = 1.3;
+const DIAG_ADJ = PLAYER_MOVE_AMOUNT * 0.75;
 const DIRECTIONS = {
   n:  {
-    axes: {
-      x: { operator: null, divisor: 1 },
-      y: { operator: '-',  divisor: 1 }
+    advance: function(pos) {
+      pos.y += PLAYER_MOVE_AMOUNT;
+      return pos;
     }
   },
   e:  {
-    axes: {
-      x: { operator: '+',  divisor: 1 },
-      y: { operator: null, divisor: 1 }
+    advance: function(pos) {
+      pos.x -= PLAYER_MOVE_AMOUNT;
+      return pos;
     }
   },
   s:  {
-    axes: {
-      x: { operator: null, divisor: 1 },
-      y: { operator: '+',  divisor: 1 }
+    advance: function(pos) {
+      pos.y -= PLAYER_MOVE_AMOUNT;
+      return pos;
     }
   },
   w:  {
-    axes: {
-      x: { operator: '-',  divisor: 1 },
-      y: { operator: null, divisor: 1 }
+    advance: function(pos) {
+      pos.x += PLAYER_MOVE_AMOUNT;
+      return pos;
     }
   },
   nw: {
-    axes: {
-      x: { operator: '-',  divisor: DIAG_ADJ },
-      y: { operator: '-',  divisor: DIAG_ADJ }
+    advance: function(pos) {
+      pos.x += PLAYER_MOVE_AMOUNT / DIAG_ADJ;
+      pos.y += PLAYER_MOVE_AMOUNT / DIAG_ADJ;
+      return pos;
     }
   },
   ne: {
-    axes: {
-      x: { operator: '+',  divisor: 1 },
-      y: { operator: '-',  divisor: DIAG_ADJ }
+    advance: function(pos) {
+      pos.x -= PLAYER_MOVE_AMOUNT / DIAG_ADJ;
+      pos.y += PLAYER_MOVE_AMOUNT / DIAG_ADJ;
+      return pos;
     }
   },
   se: {
-    axes: {
-      x: { operator: '+',  divisor: 1 },
-      y: { operator: '+',  divisor: 1 }
+    advance: function(pos) {
+      pos.x -= PLAYER_MOVE_AMOUNT / DIAG_ADJ;
+      pos.y -= PLAYER_MOVE_AMOUNT / DIAG_ADJ;
+      return pos;
     }
   },
   sw: {
-    axes: {
-      x: { operator: '-',  divisor: DIAG_ADJ },
-      y: { operator: '+',  divisor: 1 }
+    advance: function(pos) {
+      pos.x += PLAYER_MOVE_AMOUNT / DIAG_ADJ;
+      pos.y -= PLAYER_MOVE_AMOUNT / DIAG_ADJ;
+      return pos;
     }
   },
 };

@@ -37,15 +37,21 @@ World = function(opts) {
 
   this.centerize = function() {
     var self = this;
-    adjust_x = -((self.dimensions.in_pixels.x / 2) -
-      (self.$container.width() / 2));
-    self.position.in_pixels.x = adjust_x;
-    self.$elem.css({ left: (self.position.in_pixels.x + 'px') });
+   self.position.in_pixels.x = -(
+      (self.dimensions.in_pixels.x / 2) -
+      (self.$container.width() / 2)
+    );
+    self.$elem.css({
+      left: (self.position.in_pixels.x + 'px')
+    });
 
-    adjust_y = -((self.dimensions.in_pixels.y / 2) -
-      (self.$container.height() / 2));
-    self.position.in_pixels.y = adjust_y;
-    self.$elem.css({ top: (self.position.in_pixels.y + 'px') });
+    self.position.in_pixels.y = -(
+      (self.dimensions.in_pixels.y / 2) -
+      (self.$container.height() / 2)
+    );
+    self.$elem.css({
+      top: (self.position.in_pixels.y + 'px')
+    });
   };
 
   this.draw = function() {

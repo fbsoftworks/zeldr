@@ -10,3 +10,6 @@ const PLAYER_NUM_FRAMES = 2;
 
 // world constants
 const TERRAIN_PATH = './images/terrain/';
+
+// preloaders
+PRELOADED_IMAGES = [];

@@ -4,12 +4,8 @@ Sprite = function(opts) {
     in_blocks: { x: 1, y: 1 },
     in_pixels: { x: BLOCKS.dimensions.x, y: BLOCKS.dimensions.y }
   };
-  this.file_extension = null;
   this.name = opts.name;
-  this.position = {
-    in_blocks: { x: null, y: null },
-    in_pixels: { x: null, y: null }
-  };
+
   this.current_direction = 's';
   this.current_frame = 1;
   this.current_image_path = null;
@@ -20,6 +16,7 @@ Sprite = function(opts) {
   this.$elem = null;
 
   this.init = function() {
+    this.preload_images();
     this.set_direction(this.current_direction);
 
     this.$elem = $('<div class="sprite _' + this.name + '"></div>').appendTo(this.$container);
@@ -32,12 +29,8 @@ Sprite = function(opts) {
     return this;
   };
 
-  this.set_position = function(x, y, $context) {
-    $context = $context || this.$container;
-    this.position.in_pixels.x = x;
-    this.position.in_pixels.y = y;
-    $context.css('left', x);
-    $context.css('top', y);
+  this.get_current_block = function() {
+    return {};
   };
 
   this.set_direction = function(direction) {
@@ -50,4 +43,15 @@ Sprite = function(opts) {
     this.$elem.find('img').attr('src', Helpers.get_image_path(this.name, this.current_direction, this.current_frame));
   };
 
+  this.preload_images = function() {
+    var self = this;
+    n = 0;
+    $.each(['n','e','s','w','nw','ne','se','sw'], function(i, direction) {
+      for(frame = 1; frame <= PLAYER_NUM_FRAMES; frame++) {
+        PRELOADED_IMAGES[n] = new Image();
+        PRELOADED_IMAGES[n].src = Helpers.get_image_path(self.name, direction, frame);
+        n++;
+      }
+    });
+  };
 };

@@ -36,6 +36,7 @@ Player = function(opts) {
     }
 
     // TODO: check for collisions and such before updating real position
+    console.log(this.sprite.get_current_block());
 
     this.world.position.in_pixels = new_pos;
 

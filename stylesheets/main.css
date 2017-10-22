@@ -23,6 +23,7 @@ app .world  {
   width: 89px;
   height: 89px;
   background: transparent;
+  z-index: 0;
 }
 
 .world .block img {
@@ -34,13 +35,18 @@ app .world  {
   background: transparent;
 }
 
-.world .sprite,
-.world .sprite img
- {
+app .sprite {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.world .block img,
+app .sprite img {
   position: absolute;
   left: 0;
   top: 0;
   width: 89px;
   height: 89px;
-  z-index: 100;
 }

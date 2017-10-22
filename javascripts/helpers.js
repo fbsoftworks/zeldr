@@ -5,4 +5,10 @@ Helpers = {
       frame + '0' + '.' + IMAGES[name].extension
     );
   },
+
+  get_inverse_operator: function(operator) {
+    if (operator == '-') { return '+'; }
+    if (operator == '+') { return '-'; }
+    return null;
+  }
 };

@@ -35,7 +35,10 @@ Game = {
     self.world.init();
 
     // init player
-    self.player = new Player({ $container: self.world.$elem });
+    self.player = new Player({
+      $container: self.$elem,
+      world: self.world
+    });
     self.player.init();
 
     $(document).on('keydown', function(e) {
@@ -54,7 +57,7 @@ Game = {
     setInterval(function() {
       if (self.keys.pressed.length > 0) {
         combined_key = self.keys.pressed.sort().join('_');
-        console.log(combined_key);
+        //console.log(combined_key);
         if (self.keys[combined_key]) {
           if (self.keys[combined_key].action == 'move') {
             self.player.move(self.keys[combined_key].params);

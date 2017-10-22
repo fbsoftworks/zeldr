@@ -4,6 +4,10 @@ World = function(opts) {
     in_blocks: { x: null, y: null },
     in_pixels: { x: null, y: null }
   };
+  this.position = {
+    in_blocks: { x: null, y: null },
+    in_pixels: { x: null, y: null }
+  };
   this.terrain = [];
 
   this.$container = opts.$container;
@@ -12,7 +16,7 @@ World = function(opts) {
   this.init = function() {
     var self = this;
 
-    $('.world').remove();
+    self.$container.find('.world').remove();
     self.$elem = $('<div class="world"></div>').appendTo(self.$container);
 
     self.terrain = LEVELS[self.level_name].terrain;
@@ -25,12 +29,23 @@ World = function(opts) {
     self.dimensions.in_blocks.y = self.terrain.length;
     self.dimensions.in_pixels.y = self.dimensions.in_blocks.y * BLOCKS.dimensions.y;
 
-    // centerize
-    adjust_x = -((self.dimensions.in_pixels.x / 2) - (self.$container.width() / 2));
-    self.$elem.css({ left: (adjust_x + 'px') });
-
+    self.centerize();
     self.draw();
+
     return self;
+  };
+
+  this.centerize = function() {
+    var self = this;
+    adjust_x = -((self.dimensions.in_pixels.x / 2) -
+      (self.$container.width() / 2));
+    self.position.in_pixels.x = adjust_x;
+    self.$elem.css({ left: (self.position.in_pixels.x + 'px') });
+
+    adjust_y = -((self.dimensions.in_pixels.y / 2) -
+      (self.$container.height() / 2));
+    self.position.in_pixels.y = adjust_y;
+    self.$elem.css({ top: (self.position.in_pixels.y + 'px') });
   };
 
   this.draw = function() {

@@ -11,4 +11,5 @@ Helpers = {
     if (operator == '+') { return '-'; }
     return null;
   }
+
 };

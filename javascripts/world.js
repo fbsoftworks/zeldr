@@ -62,8 +62,8 @@ World = function(opts) {
       $.each(y.split(''), function(n, x) {
         if (x == '.') { return true; }
         block_data = BLOCKS.types[x];
-        pos_x = n * BLOCKS.dimensions.x - BLOCKS.dimensions.x;
-        pos_y = i * BLOCKS.dimensions.y - BLOCKS.dimensions.y;
+        pos_x = n * BLOCKS.dimensions.x;
+        pos_y = i * BLOCKS.dimensions.y;
         $block = $('<div class="block ' + block_data.ident + '"></div>')
           .appendTo(self.$elem);
         //$('<img src="' + TERRAIN_PATH + block_data.image_name + '" />').appendTo($block);

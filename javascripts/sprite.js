@@ -1,11 +1,12 @@
 Sprite = function(opts) {
-  this.is_player = opts.is_player || false;
+  this.name = opts.name;
   this.dimensions = {
     in_blocks: { x: 1, y: 1 },
     in_pixels: { x: BLOCKS.dimensions.x, y: BLOCKS.dimensions.y }
   };
-  this.name = opts.name;
-
+  this.position = {
+    in_pixels: { x: null, y: null }
+  };
   this.current_direction = 's';
   this.current_frame = 1;
   this.current_image_path = null;
@@ -29,10 +30,6 @@ Sprite = function(opts) {
     return this;
   };
 
-  this.get_current_block = function() {
-    return {};
-  };
-
   this.set_direction = function(direction) {
     this.current_direction = direction;
     this.current_image_path = Helpers.get_image_path(this.name, this.current_direction, this.current_frame);
@@ -43,10 +40,27 @@ Sprite = function(opts) {
     this.$elem.find('img').attr('src', Helpers.get_image_path(this.name, this.current_direction, this.current_frame));
   };
 
+  this.set_initial_position = function(origin, location) {
+    centerpoint = {
+      x: (location.left - origin.x) + (this.dimensions.in_pixels.x / 2),
+      y: (location.top - origin.y) + (this.dimensions.in_pixels.y / 2)
+    };
+    this.position.in_pixels.x = centerpoint.x;
+    this.position.in_pixels.y = centerpoint.y;
+  };
+
+  this.get_block = function(centerpoint) {
+    var self = this;
+    return {
+      x: Math.floor(centerpoint.x / BLOCKS.dimensions.x),
+      y: Math.ceil(centerpoint.y / BLOCKS.dimensions.y)
+    };
+  };
+
   this.preload_images = function() {
     var self = this;
     n = 0;
-    $.each(['n','e','s','w','nw','ne','se','sw'], function(i, direction) {
+    $.each(Object.keys(DIRECTIONS), function(i, direction) {
       for(frame = 1; frame <= PLAYER_NUM_FRAMES; frame++) {
         PRELOADED_IMAGES[n] = new Image();
         PRELOADED_IMAGES[n].src = Helpers.get_image_path(self.name, direction, frame);

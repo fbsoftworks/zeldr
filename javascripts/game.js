@@ -35,11 +35,7 @@ Game = {
     self.world.init();
 
     // init player
-    self.player = new Sprite({
-      is_player: true,
-      name: PLAYER_SPRITE_SHEET_NAME,
-      $container: self.world.$elem
-    })
+    self.player = new Player({ $container: self.world.$elem });
     self.player.init();
 
     $(document).on('keydown', function(e) {

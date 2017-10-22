@@ -6,7 +6,10 @@ Sprite = function(opts) {
   };
   this.file_extension = null;
   this.name = opts.name;
-  this.position = { x: null, y: null };
+  this.position = {
+    in_blocks: { x: null, y: null },
+    in_pixels: { x: null, y: null }
+  };
   this.current_direction = 's';
   this.current_frame = 1;
   this.swap_timer = 0;
@@ -24,15 +27,24 @@ Sprite = function(opts) {
     self.$elem.width(this.dimensions.in_pixels.x);
     self.$elem.height(this.dimensions.in_pixels.y);
 
-    // center player
-    self.position.x = (self.$container.width() / 2) - (self.$elem.width() / 2);
-    self.position.y = (self.$container.height() / 2) - (self.$elem.height() / 2);
-
-    // set sprite position
-    self.$elem.css('left', self.position.x);
-    self.$elem.css('top', self.position.y);
+    self.centerize();
+    self.set_position(self.position.in_pixels.x, self.position.in_pixels.y);
 
     return self;
+  };
+
+  this.centerize = function() {
+    this.set_position(
+      (this.$container.width() / 2) - (this.$elem.width() / 2),
+      (this.$container.height() / 2) - (this.$elem.height() / 2)
+    );
+  };
+
+  this.set_position = function(x, y) {
+    this.position.in_pixels.x = x;
+    this.position.in_pixels.y = y;
+    this.$elem.css('left', x);
+    this.$elem.css('top', y);
   };
 
   this.swap_image = function() {
@@ -41,14 +53,18 @@ Sprite = function(opts) {
   };
 
   this.move = function(opts) {
-    this.current_direction = opts.direction;
-    var dir = DIRECTIONS[this.current_direction];
-    var new_pos = { x: this.position.x, y: this.position.y };
+    var self = this;
+    self.current_direction = opts.direction;
+    var dir = DIRECTIONS[self.current_direction];
+    var new_pos = {
+      x: self.position.in_pixels.x,
+      y: self.position.in_pixels.y
+    };
 
     if (this.swap_timer >= PLAYER_SWAP_TIMER_MAX) {
-      this.swap_image(); this.swap_timer = 0;
+      self.swap_image(); self.swap_timer = 0;
     } else {
-      this.swap_timer++;
+      self.swap_timer++;
     }
 
     if (dir.axes.x.operator) {
@@ -66,18 +82,14 @@ Sprite = function(opts) {
       ));
     }
 
-    if (new_pos.x % this.distance_per_frame_swap == 0) { this.swap_image(); }
-    if (new_pos.y & this.distance_per_frame_swap == 0) { this.swap_image(); }
+    if (new_pos.x % self.distance_per_frame_swap == 0) { self.swap_image(); }
+    if (new_pos.y & self.distance_per_frame_swap == 0) { self.swap_image(); }
 
-    this.position.x = new_pos.x;
-    this.position.y = new_pos.y;
+    self.position.in_pixels.x = new_pos.x;
+    self.position.in_pixels.y = new_pos.y;
 
-    if (self.is_player) {
-      this.$container.css({ right: new_pos.x });
-      this.$container.css({ bottom: new_pos.y });
-    } else {
-      // move elemnt vs. moving the world around the element
-    }
+    self.$elem.css({ left: new_pos.x });
+    self.$elem.css({ top: new_pos.y });
   };
 
   this.attack = function(opts) {

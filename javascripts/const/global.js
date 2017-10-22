@@ -2,7 +2,7 @@
 LEVELS = {};
 
 // player constants
-const PLAYER_SPRITE_SHEET_NAME = 'test_pattern';
+const PLAYER_SPRITE_IMAGE_SET = 'test_pattern';
 const PLAYER_MOVE_AMOUNT = 1;
 const PLAYER_MOVE_DELAY = 0;
 const PLAYER_SWAP_TIMER_MAX = 40;

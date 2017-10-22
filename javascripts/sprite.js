@@ -1,38 +1,43 @@
 Sprite = function(opts) {
   this.is_player = opts.is_player || false;
-  this.dimensions = { x: BLOCKS.dimensions.x, y: BLOCKS.dimensions.y };
+  this.dimensions = {
+    in_blocks: { x: 1, y: 1 },
+    in_pixels: { x: BLOCKS.dimensions.x, y: BLOCKS.dimensions.y }
+  };
   this.file_extension = null;
   this.name = opts.name;
-  this.position = { x: 240, y: 300 };
+  this.position = { x: null, y: null };
   this.current_direction = 's';
   this.current_frame = 1;
   this.swap_timer = 0;
   this.directions = DIRECTIONS;
 
-  this.$elem = opts.$elem;
-  this.$world = opts.$world;
-  this.$sprite = null;
+  this.$container = opts.$container;
+  this.$elem = null;
 
   this.init = function() {
     var self = this;
-    self.$sprite = $('<div class="sprite _' + self.name + '"></div>').appendTo(self.$world);
-    $('<img src="' + Helpers.get_image_path(self.name, self.current_direction, self.current_frame) + '" />').appendTo(self.$sprite);
+    self.$elem = $('<div class="sprite _' + self.name + '"></div>').appendTo(self.$container);
+    $('<img src="' + Helpers.get_image_path(self.name, self.current_direction, self.current_frame) + '" />').appendTo(self.$elem);
 
     // set sprite dimensions
-    self.$sprite.width(this.dimensions.x);
-    self.$sprite.height(this.dimensions.y);
+    self.$elem.width(this.dimensions.in_pixels.x);
+    self.$elem.height(this.dimensions.in_pixels.y);
+
+    // center player
+    self.position.x = (self.$container.width() / 2) - (self.$elem.width() / 2);
+    self.position.y = (self.$container.height() / 2) - (self.$elem.height() / 2);
 
     // set sprite position
-    self.$sprite.css('left', this.position.x);
-    self.$sprite.css('top', this.position.y);
+    self.$elem.css('left', self.position.x);
+    self.$elem.css('top', self.position.y);
 
     return self;
-
   };
 
   this.swap_image = function() {
-    this.current_frame = (this.current_frame > (this.num_frames - 1)) ? 1 : this.current_frame += 1;
-    this.$sprite.find('img').attr('src', Helpers.get_image_path(this.name, self.current_direction, this.current_frame));
+    this.current_frame = (this.current_frame > (PLAYER_NUM_FRAMES - 1)) ? 1 : this.current_frame += 1;
+    this.$elem.find('img').attr('src', Helpers.get_image_path(this.name, this.current_direction, this.current_frame));
   };
 
   this.move = function(opts) {
@@ -67,9 +72,12 @@ Sprite = function(opts) {
     this.position.x = new_pos.x;
     this.position.y = new_pos.y;
 
-    this.$level.css({ right: new_pos.x });
-    this.$level.css({ bottom: new_pos.y });
-
+    if (self.is_player) {
+      this.$container.css({ right: new_pos.x });
+      this.$container.css({ bottom: new_pos.y });
+    } else {
+      // move elemnt vs. moving the world around the element
+    }
   };
 
   this.attack = function(opts) {

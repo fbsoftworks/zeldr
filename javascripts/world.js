@@ -7,12 +7,13 @@ World = function(opts) {
   this.terrain = [];
 
   this.$container = opts.$container;
+  this.$elem = null;
 
   this.init = function() {
     var self = this;
 
     $('.world').remove();
-    self.$world = $('<div class="world"></div>').appendTo(self.$container);
+    self.$elem = $('<div class="world"></div>').appendTo(self.$container);
 
     self.terrain = LEVELS[self.level_name].terrain;
 
@@ -26,21 +27,21 @@ World = function(opts) {
 
     // centerize
     adjust_x = -((self.dimensions.in_pixels.x / 2) - (self.$container.width() / 2));
-    self.$world.css('left', (adjust_x + 'px'));
+    self.$elem.css({ left: (adjust_x + 'px') });
 
+    self.draw();
     return self;
-
   };
 
   this.draw = function() {
     var self = this;
-    self.$world.width(self.dimensions.in_pixels.x + 'px');
-    self.$world.height(self.dimensions.in_pixels.y + 'px');
+    self.$elem.width(self.dimensions.in_pixels.x + 'px');
+    self.$elem.height(self.dimensions.in_pixels.y + 'px');
     $.each(self.terrain, function(i, y) {
       $.each(y.split(''), function(n, x) {
         block_data = BLOCKS.types[x];
         $block = $('<div class="block ' + block_data.ident + '"></div>')
-          .appendTo(self.$world);
+          .appendTo(self.$elem);
         $('<img src="' + TERRAIN_PATH + block_data.image_name + '" />').appendTo($block);
       });
     });
